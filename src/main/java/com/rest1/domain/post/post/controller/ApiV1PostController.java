@@ -1,5 +1,7 @@
 package com.rest1.domain.post.post.controller;
 
+import com.rest1.domain.post.post.dto.PostDetailDto;
+import com.rest1.domain.post.post.dto.PostListItemDto;
 import com.rest1.domain.post.post.entity.Post;
 import com.rest1.domain.post.post.service.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +17,21 @@ public class ApiV1PostController {
     }
 
     @GetMapping("/api/v1/posts")
-    public List<Post> getItems() {
-        return postService.findAll();
+    public List<PostListItemDto> getItems() {
+        List<Post> posts = postService.findAll();
+        return posts.stream()
+                        .map(post -> new PostListItemDto(post))
+                        .toList();
     }
 
 
     @GetMapping("/api/v1/posts/{id}")
-    public Post getItem(
+    public PostDetailDto getItem(
             @PathVariable Long id
     ) {
-        return postService.findById(id);
+        Post post = postService.findById(id);
+        PostDetailDto postDto = new PostDetailDto(post);
+        return postDto;
     }
 
     record PostWriteReqBody(
@@ -34,11 +41,11 @@ public class ApiV1PostController {
     }
 
     @PostMapping("/api/v1/posts")
-    public Post write(
+    public PostDetailDto write(
             @RequestBody PostWriteReqBody reqBody
     ) {
-       return postService.write(reqBody.title(), reqBody.content());
-
+       Post post = postService.write(reqBody.title(), reqBody.content());
+       return new PostDetailDto(post);
     }
 
     record PostModifyReqBody (
@@ -47,11 +54,12 @@ public class ApiV1PostController {
     ){ }
 
     @PutMapping("/api/v1/posts/{id}")
-    public Post modity (
+    public PostDetailDto modify (
             @PathVariable Long id,
             @RequestBody PostModifyReqBody reqBody
     ){
-       return postService.modify(id, reqBody.title(), reqBody.content());
+       Post post = postService.modify(id, reqBody.title(), reqBody.content());
+       return  new PostDetailDto(post);
     }
 
     @DeleteMapping("/api/v1/posts/{id}")
