@@ -29,4 +29,13 @@ public class MemberService {
         Member member = new Member(username, encodePassword, nickname, apiKey);
         return memberRepository.save(member);
     }
+
+    public Member login(String username, String password) {
+        Member member = memberRepository.findByUsername(username).orElseThrow(()-> new ServiceException(HttpStatus.UNAUTHORIZED,  "로그인에 실패했습니다."));
+        String encodedPassword = member.getPassword();
+        if (!passwordEncoder.matches(password, encodedPassword)){
+            throw new ServiceException(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다.");
+        }
+        return member;
+    }
 }

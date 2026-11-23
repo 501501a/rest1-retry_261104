@@ -1,6 +1,7 @@
 package com.rest1.domain.member.controller;
 
 import com.rest1.domain.member.dto.MemberDto;
+import com.rest1.domain.member.dto.MemberLoginDto;
 import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -32,6 +33,21 @@ public class ApiV1MemberController {
     ){
         Member member = memberService.join(reqBody.username(), reqBody.password(), reqBody.nickname());
         return new MemberDto(member);
+    }
+
+    record MemberLoginReqBody(
+            @NotBlank
+            String username,
+            @NotBlank
+            String password
+    ){}
+
+    @PostMapping("/api/v1/members/login")
+    public MemberLoginDto login(
+            @Valid @RequestBody MemberLoginReqBody reqBody
+    ){
+       Member member = memberService.login(reqBody.username(), reqBody.password());
+        return new MemberLoginDto(member);
     }
 
 }

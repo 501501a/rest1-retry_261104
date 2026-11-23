@@ -57,6 +57,54 @@ class ApiV1MemberControllerTest {
                 )
                 .andExpect(status().isConflict());
     }
+
+
+    @Test
+    @DisplayName("로그인 성공")
+    void t3() throws Exception {
+        mvc.perform(post("/api/v1/members/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "username":"user1",
+                                    "password":"1234"
+                                }
+                                """)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.apiKey").exists());
+    }
+
+
+    @Test
+    @DisplayName("잘못된 비밀번호 요청")
+    void t4() throws Exception {
+        mvc.perform(post("/api/v1/members/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "username":"user1",
+                                    "password":"1111"
+                                }
+                                """)
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("존재 하지 않은 아이디 로그인")
+    void t5() throws Exception {
+        mvc.perform(post("/api/v1/members/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "username":"nobody",
+                                    "password":"1111"
+                                }
+                                """)
+                )
+                .andExpect(status().isUnauthorized());
+    }
 }
 
 
