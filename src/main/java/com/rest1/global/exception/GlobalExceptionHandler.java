@@ -34,4 +34,11 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(message);
     }
+
+    @ExceptionHandler(ServiceException.class)
+    public ResponseEntity<String> handleServiceException(ServiceException e){
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(e.getMessage());
+    }
 }

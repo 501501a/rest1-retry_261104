@@ -38,7 +38,7 @@ class ApiV1PostControllerTest {
     }
 
     @Test
-    @DisplayName(("글 작성 성공"))
+    @DisplayName("글 작성 성공")
     void t3() throws Exception {
         mvc.perform(post("/api/v1/posts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,4 +52,21 @@ class ApiV1PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("새로운 글"));
     }
+
+    @Test
+    @DisplayName("로그인 없이 글 작성 불가")
+    void t4() throws Exception{
+        mvc.perform(post("/api/v1/posts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "title":"새로운 글",
+                                    "content":"새로운 내용"
+                                }
+                                """)
+                )
+                .andExpect(status().isForbidden());
+    }
+
+
 }
