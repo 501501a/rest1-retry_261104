@@ -1,5 +1,6 @@
 package com.rest1.domain.post.post.controller;
 
+import com.rest1.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ class ApiV1PostControllerTest {
     @Autowired
     private MockMvc mvc;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Test
     @DisplayName("단건조회 성공")
     void t1() throws Exception {
@@ -41,6 +45,7 @@ class ApiV1PostControllerTest {
     @DisplayName("글 작성 성공")
     void t3() throws Exception {
         mvc.perform(post("/api/v1/posts")
+                        .header("Authorization", "Bearer " + memberRepository.findByUsername("user1").get().getApiKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -55,7 +60,7 @@ class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("로그인 없이 글 작성 불가")
-    void t4() throws Exception{
+    void t4() throws Exception {
         mvc.perform(post("/api/v1/posts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

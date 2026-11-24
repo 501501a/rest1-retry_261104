@@ -1,5 +1,6 @@
 package com.rest1.domain.member.controller;
 
+import com.rest1.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +24,8 @@ class ApiV1MemberControllerTest {
 
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("회원가입")
@@ -105,6 +109,16 @@ class ApiV1MemberControllerTest {
                                 """)
                 )
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("내 정보")
+    void t6() throws Exception {
+        mvc.perform(get("/api/v1/members/me")
+                        .header("Authorization", "Bearer " + memberRepository.findByUsername("user1").get().getApiKey())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("user1"));
     }
 }
 

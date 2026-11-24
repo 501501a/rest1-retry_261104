@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -42,5 +43,13 @@ public class MemberService {
 
     public String genAccessToken(Member member){
         return authTokenService.genAccessToken(member);
+    }
+
+    public Optional<Member> findByApiKey(String apiKey){
+       return memberRepository.findByApiKey(apiKey);
+    }
+
+    public Optional<Member> findByUsername(String username){
+        return memberRepository.findByUsername(username);
     }
 }
