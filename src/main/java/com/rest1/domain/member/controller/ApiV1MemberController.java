@@ -47,7 +47,8 @@ public class ApiV1MemberController {
             @Valid @RequestBody MemberLoginReqBody reqBody
     ){
        Member member = memberService.login(reqBody.username(), reqBody.password());
-        return new MemberLoginDto(member);
+       String accessToken = memberService.genAccessToken(member);
+        return new MemberLoginDto(member, accessToken);
     }
 
 }

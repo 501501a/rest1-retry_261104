@@ -72,7 +72,8 @@ class ApiV1MemberControllerTest {
                                 """)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.apiKey").exists());
+                .andExpect(jsonPath("$.apiKey").exists())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty());
     }
 
 

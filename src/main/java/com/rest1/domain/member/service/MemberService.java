@@ -17,6 +17,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthTokenService authTokenService;
 
     @Transactional
     public Member join(String username, String password, String nickname) {
@@ -37,5 +38,9 @@ public class MemberService {
             throw new ServiceException(HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다.");
         }
         return member;
+    }
+
+    public String genAccessToken(Member member){
+        return authTokenService.genAccessToken(member);
     }
 }
