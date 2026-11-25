@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -51,5 +52,9 @@ public class MemberService {
 
     public Optional<Member> findByUsername(String username){
         return memberRepository.findByUsername(username);
+    }
+
+    public Map<String, Object> payloadOrNull(String token){
+        return authTokenService.payloadOrNull(token);
     }
 }

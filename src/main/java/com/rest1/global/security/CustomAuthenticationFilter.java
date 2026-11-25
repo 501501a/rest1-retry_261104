@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -32,16 +33,35 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         String apiKey = header.replace("Bearer ", "");
-        Member member = memberService.findByApiKey(apiKey).orElse(null);
-        if (member == null){
+
+        String[] token = apiKey.split(" ");
+        apiKey = token[0];
+
+        Map<String, Object> payload = null;
+
+        if (1 < token.length){
+            String accessToken = token[1];
+            payload = memberService.payloadOrNull(accessToken);
+        }
+        String username = "";
+        if (payload != null){
+            username = (String) payload.get("username");
+        }
+        if (username.isEmpty()){
+            Member member = memberService.findByApiKey(apiKey).orElse(null);
+            if (member != null){
+                username = member.getUsername();
+            }
+        }
+        if (username.isEmpty()){
             filterChain.doFilter(request, response);
             return;
         }
 
         // SecurityContextHolder에 인증데이터 저장
         UserDetails user = new User(
-                member.getUsername(),
-                member.getPassword(),
+                username,
+                "",
                 List.of()
         );
 

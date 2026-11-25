@@ -1,6 +1,8 @@
 package com.rest1.domain.member.controller;
 
+import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.member.repository.MemberRepository;
+import com.rest1.domain.member.service.AuthTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,6 +28,8 @@ class ApiV1MemberControllerTest {
     private MockMvc mvc;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private AuthTokenService authTokenService;
 
     @Test
     @DisplayName("회원가입")
@@ -116,6 +120,19 @@ class ApiV1MemberControllerTest {
     void t6() throws Exception {
         mvc.perform(get("/api/v1/members/me")
                         .header("Authorization", "Bearer " + memberRepository.findByUsername("user1").get().getApiKey())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("user1"));
+    }
+
+    @Test
+    @DisplayName("엉터리 apiKey + 유효한 accessToken → 내 정보 조회 성공")
+    void t7() throws Exception {
+
+        Member member = memberRepository.findByUsername("user1").get();
+
+        mvc.perform(get("/api/v1/members/me")
+                        .header("Authorization", "Bearer " + "apiKey-123"+ " " + authTokenService.genAccessToken(member))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("user1"));
