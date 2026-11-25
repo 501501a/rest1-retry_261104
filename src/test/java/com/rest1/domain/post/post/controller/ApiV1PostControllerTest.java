@@ -70,7 +70,8 @@ class ApiV1PostControllerTest {
                                 }
                                 """)
                 )
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("로그인 후 이용해 주세요."));
     }
 
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,6 +31,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/members/logout").permitAll()
                         .anyRequest().authenticated()) // ④ 나머지는 전부 로그인 필요
                 .csrf(csrf -> csrf.disable()) // ⑤ 쿠키 세션 방식이 아니라서 끔
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.setContentType("text/plain;charset=UTF-8");                    // ② 라벨: 글자 + 한글 인코딩
+                            response.getWriter().write( "로그인 후 이용해 주세요.");                 // ③ 펜 꺼내서 편지 쓰기
+                        }))
+
                 .headers(headers -> headers
                         .frameOptions(frame -> frame.sameOrigin())) // ⑥ h2 콘솔 화면 허용
                         .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -15,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
 @SpringBootTest
@@ -136,6 +135,16 @@ class ApiV1MemberControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("user1"));
+    }
+
+    @Test
+    @DisplayName("로그인 없이 내 정보 조회")
+    void t8() throws Exception {
+        mvc.perform(get("/api/v1/members/me")
+                )
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("로그인 후 이용해 주세요."));
+
     }
 }
 
