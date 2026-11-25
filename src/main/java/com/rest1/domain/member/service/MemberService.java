@@ -26,6 +26,9 @@ public class MemberService {
         memberRepository.findByUsername(username).ifPresent(member -> {
             throw new ServiceException(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다.");
         });
+        memberRepository.findByNickname(nickname).ifPresent(member -> {
+            throw new ServiceException(HttpStatus.CONFLICT,"이미 사용 중인 닉네임입니다.");
+        });
 
         String encodePassword = passwordEncoder.encode(password);
         String apiKey = UUID.randomUUID().toString();

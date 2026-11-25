@@ -65,10 +65,26 @@ class ApiV1MemberControllerTest {
                 .andExpect(status().isConflict());
     }
 
+    @Test
+    @DisplayName("닉네임 중복 가입")
+    void t3() throws Exception {
+        mvc.perform(post("/api/v1/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                    "username":"newUser2",
+                                    "password":"1234",
+                                    "nickname":"유저1"
+                                }
+                                """)
+                )
+                .andExpect(status().isConflict())
+                .andExpect(content().string("이미 사용 중인 닉네임입니다."));
+    }
 
     @Test
     @DisplayName("로그인 성공")
-    void t3() throws Exception {
+    void t4() throws Exception {
         mvc.perform(post("/api/v1/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -86,7 +102,7 @@ class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("잘못된 비밀번호 요청")
-    void t4() throws Exception {
+    void t5() throws Exception {
         mvc.perform(post("/api/v1/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -101,7 +117,7 @@ class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("존재 하지 않은 아이디 로그인")
-    void t5() throws Exception {
+    void t6() throws Exception {
         mvc.perform(post("/api/v1/members/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -116,7 +132,7 @@ class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("내 정보")
-    void t6() throws Exception {
+    void t7() throws Exception {
         mvc.perform(get("/api/v1/members/me")
                         .header("Authorization", "Bearer " + memberRepository.findByUsername("user1").get().getApiKey())
                 )
@@ -126,7 +142,7 @@ class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("엉터리 apiKey + 유효한 accessToken → 내 정보 조회 성공")
-    void t7() throws Exception {
+    void t8() throws Exception {
 
         Member member = memberRepository.findByUsername("user1").get();
 
@@ -139,7 +155,7 @@ class ApiV1MemberControllerTest {
 
     @Test
     @DisplayName("로그인 없이 내 정보 조회")
-    void t8() throws Exception {
+    void t9() throws Exception {
         mvc.perform(get("/api/v1/members/me")
                 )
                 .andExpect(status().isUnauthorized())
