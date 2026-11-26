@@ -12,7 +12,10 @@ public record PostDetailDto(
         String content,
         LocalDateTime createDate,
         LocalDateTime modifyDate,
-        List<CommentDto> comments
+        List<CommentDto> comments,
+        String authorNickname,
+        Long authorId
+
 ) {
     public PostDetailDto(Post post) {
         this(
@@ -24,7 +27,9 @@ public record PostDetailDto(
                 post.getComments()
                         .stream()
                         .map(comment -> new CommentDto(comment))
-                        .toList()
+                        .toList(),
+                post.getAuthor().getNickname(),
+                post.getAuthor().getId()
         );
     }
 }

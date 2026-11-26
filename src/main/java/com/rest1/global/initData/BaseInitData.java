@@ -1,5 +1,6 @@
 package com.rest1.global.initData;
 
+import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.member.service.MemberService;
 import com.rest1.domain.post.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +45,11 @@ public class BaseInitData {
 
         if (postService.count() > 0) return;
 
-        postService.write("글1", "내용1");
-        postService.write("글2", "내용2");
+
+        Member user1 = memberService.findByUsername("user1").get();
+        Member user2 = memberService.findByUsername("user2").get();
+
+        postService.write(user1, "글1", "내용1");
+        postService.write(user2, "글2", "내용2");
     }
 }

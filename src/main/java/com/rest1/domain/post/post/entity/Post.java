@@ -1,9 +1,11 @@
 package com.rest1.domain.post.post.entity;
 
+import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.post.comment.entity.Comment;
 import com.rest1.global.jpa.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +21,11 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
-    public Post(String title, String content) {
+    @ManyToOne
+    private Member author;
+
+    public Post(Member author, String title, String content) {
+        this.author = author;
         this.title = title;
         this.content = content;
     }

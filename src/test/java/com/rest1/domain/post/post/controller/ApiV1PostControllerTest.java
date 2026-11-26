@@ -55,7 +55,8 @@ class ApiV1PostControllerTest {
                                 """)
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("새로운 글"));
+                .andExpect(jsonPath("$.title").value("새로운 글"))
+                .andExpect(jsonPath("$.authorNickname").value("유저1"));
     }
 
     @Test
