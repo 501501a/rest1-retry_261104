@@ -1,5 +1,6 @@
 package com.rest1.domain.post.comment.entity;
 
+import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.post.post.entity.Post;
 import com.rest1.global.jpa.entity.BaseEntity;
 import jakarta.persistence.Entity;
@@ -16,8 +17,12 @@ public class Comment extends BaseEntity {
     @ManyToOne
     private Post post;
 
-    public Comment(Post post, String content){
+    @ManyToOne
+    private Member author;
+
+    public Comment(Post post, Member author, String content){
         this.post = post;
+        this.author = author;
         this.content = content;
     }
 

@@ -20,7 +20,7 @@ public class ApiV1PostController {
     private final MemberService memberService;
 
     @GetMapping("/api/v1/posts")
-    public List<PostListItemDto> getItems() {
+    public List<PostListItemDto> list() {
         List<Post> posts = postService.findAll();
         return posts.stream()
                 .map(post -> new PostListItemDto(post))
@@ -29,7 +29,7 @@ public class ApiV1PostController {
 
 
     @GetMapping("/api/v1/posts/{id}")
-    public PostDetailDto getItem(
+    public PostDetailDto detail(
             @PathVariable Long id
     ) {
         Post post = postService.findById(id);

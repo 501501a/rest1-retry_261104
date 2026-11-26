@@ -1,10 +1,13 @@
 package com.rest1.domain.post.comment.controller;
 
+import com.rest1.domain.member.entity.Member;
+import com.rest1.domain.member.service.MemberService;
 import com.rest1.domain.post.comment.dto.CommentDto;
 import com.rest1.domain.post.comment.service.CommentService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 public class ApiV1CommentController {
 
     private final CommentService commentService;
+    private final MemberService memberService;
 
     record PostCommentsReqBody(
             @NotBlank String content
@@ -21,12 +25,15 @@ public class ApiV1CommentController {
     }
 
     @PostMapping("/api/v1/posts/{postId}/comments")
-    public CommentDto comments(
+    public CommentDto write(
             @PathVariable Long postId,
             @Valid @RequestBody PostCommentsReqBody reqBody
     ) {
-        CommentDto comments = commentService.write(postId, reqBody.content());
-        return comments;
+        String findName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member actor = memberService.findByUsername(findName).get();
+
+        CommentDto comment = commentService.write(actor, postId, reqBody.content());
+        return comment;
     }
 
     record PostCommentModifyReqBody(
@@ -35,7 +42,7 @@ public class ApiV1CommentController {
     }
 
     @PutMapping("/api/v1/posts/{postId}/comments/{id}")
-    public CommentDto commentModify(
+    public CommentDto modify(
             @PathVariable Long postId,
             @PathVariable Long id,
             @Valid @RequestBody PostCommentModifyReqBody reqBody
@@ -45,14 +52,14 @@ public class ApiV1CommentController {
     }
 
     @GetMapping("/api/v1/posts/{postId}/comments")
-    public List<CommentDto> getComments(
+    public List<CommentDto> list(
             @PathVariable Long postId
     ) {
         return commentService.getComments(postId);
     }
 
     @GetMapping("/api/v1/posts/{postId}/comments/{id}")
-    public CommentDto getComment(
+    public CommentDto detail(
             @PathVariable Long postId,
             @PathVariable Long id
     ) {
@@ -60,7 +67,7 @@ public class ApiV1CommentController {
     }
 
     @DeleteMapping("/api/v1/posts/{postId}/comments/{id}")
-    public String deleteComment(
+    public String delete(
             @PathVariable Long postId,
             @PathVariable Long id
     ) {

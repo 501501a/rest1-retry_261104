@@ -1,5 +1,6 @@
 package com.rest1.domain.post.comment.service;
 
+import com.rest1.domain.member.entity.Member;
 import com.rest1.domain.post.comment.dto.CommentDto;
 import com.rest1.domain.post.comment.entity.Comment;
 import com.rest1.domain.post.comment.repository.CommentRepository;
@@ -20,9 +21,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentDto write(Long id, String content) {
+    public CommentDto write(Member author, Long id, String content) {
         Post targetPost = postService.findById(id);
-        Comment comment = new Comment(targetPost, content);
+        Comment comment = new Comment(targetPost, author, content);
         Comment savedComment = commentRepository.save(comment);
         CommentDto commentDto = new CommentDto(savedComment);
         return commentDto;
